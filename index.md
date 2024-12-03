@@ -25,50 +25,46 @@ This suggests Rubin should consider:
 * `org.rubinobservatory`
 * `org.rubinobs`
 
-If `lsst` is in the authority name that implies we would change the authority name in the future for some potential non-LSST survey in the late 2030s.
+Given that there is potential for a non-LSST survey in the future and given the naming convention we use for Jira hosting we have decided that Rubin will use `org.rubinobs` as the naming authority.
 
 ## Resource Key
 
 The resource key allows us to segregate our registry entries.
 For example we could do what GAVO does and use `~` to indicate that all our resources are using a single registry entry.
-Alternatively we could segregate by butler datasets vs catalog content or have a resource per data release.
+We could also segregate based on type of dataset or data release.
 
-* `~`
-* `butler`
-* `datasets`
-* `lsst`
-* `lsst-dr1`
-* `catalog`
+We feel that registry entries per data release are essential.
+Given there is also a desire for a IVO ID to indicate which data access center the data come from, we intend to include both the DAC and the data release in the resource key.
+
+Examples are:
+
+* `usdac/lsst-dp1`
+* `ukdac/lsst-dr1`
 
 ## Query
 
 The query part of the IVOID indicates how a specific dataset should be referenced.
-In theory this could be the Butler dataset UUID or the source/object catalog ID without any other information.
-In practice we would not want to look in all possible butler repositories for a matching dataset ID and so the Butler label should be included (assuming we aren't encoding the butler repository in the resource key section).
+For a Butler dataset we would need the repository label and the dataset UUID.
+This may result in duplication of data release information from the resource key but we do not see that as a problem.
+The query string can be either a string that should be parsed into components or use the more explicit query string format.
+Rather than using something like `?label/UUID` we have decided to use the more explicit form of `?repo=label&id=UUID`.
 
-* `?dr1/UUID`
-* `?/repo/main/UUID`
-* `?butler/dp1/UUID`
+### Catalog Entries
 
-As can be seen from the previous section it is still unclear whether `butler?dr1/UUID`, `butler/dr1?UUID` or `lsst?butler/dr1/UUID` are preferred.
+There is no requirement for us to issue IVOA identifiers for individual catalog entries, but there is nothing to prevent this if we so desire.
+Catalog IDs are meant to be unique for a given data release but are not necessarily unique across the entire lifetime of the survey for all ID types.
 
-All our catalog IDs encode the data release and the catalog entry type (source vs object vs DIA variants) within them so there is no requirement for a data release to be explicitly included or to note whether it is a source or not.
-From a readability perspective it would help if that information was included.
+In a similar way to our handling of query strings for Butler datasets we propose a form of `?type=object&release=dr1&id=OBJECTID` for catalog entries.
+Here type can be `object`, `source`, `diaobject`, `diasource`, or `forcedsource`.
 
-* `?object/dr1/1234567890`
-* `?source/dr1/1234567890`
 
-An alternative is to explicitly use keyword/value form:
+## Combined Example
 
-* `?repo=/repo/main&id=UUID`
-* `?type=object&release=dr1&id=OBJECT_ID`
+Given the decisions from the previous sections we propose that our IVO identifiers will have the form:
 
-## Putting it All Together
+* `ivo://org.rubinobs/usdac/dr1?repo=dr1&id=UUID`
+* `ivo://org.rubinobs/usdac/dp1?type=object&release=dp1&id=OBJECTID`
 
-The previous sections would suggest that a butler IVOID could look like:
-
-* `ivo://rubin.lsst/datasets?dr1/UUID`
-* `ivo://rubin.lsst/catalog?source/dr1/SOURCE_ID`
 
 ## References
 

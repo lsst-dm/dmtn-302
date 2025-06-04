@@ -15,7 +15,7 @@ This document will address the naming authority, resource key, and query parts o
 IVOIDs are used in the ObsCore standard, in particular, for the following fields: `obs_publisher_did`, `obs_creator_did`, and `publisher_id`.  The roles of these fields, and how we will use them, are discussed below.
 While IVOIDs do provide a standard means of labeling datasets, with the intention of stability across the lifetime of
 the publisher, they are not equivalent to, and are not substitutes for, the use of DOIs for LSST entities and datasets.
-Those are discussed elsewhere, primarily in DMTN-318.
+Those are discussed elsewhere, primarily in {cite:p}`DMTN-318`.
 
 ## Naming Authority
 

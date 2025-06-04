@@ -140,7 +140,7 @@ Here type can be `object`, `source`, `diaobject`, `diasource`, or `forcedsource`
 
 ## Combined Example
 
-Given the decisions from the previous sections we propose that our IVO identifiers will have the form:
+Given the decisions from the previous sections we propose that our IVOA identifiers will have the form:
 
 * `ivo://org.rubinobs/lsst-dr1?repo=dr1&id=UUID`
 * `ivo://org.rubinobs/lsst-dp1?type=object&release=dp1&id=OBJECTID`

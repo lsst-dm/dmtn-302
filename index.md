@@ -47,39 +47,31 @@ we feel that enabling registry lookups per data release is essential for the doc
 
 ### "Creator" and "Publisher" Resource Keys
 
-The most important near-term use of IVOID in our data services is in the context of ObsCore-based image metadata services
-(SIAv2 and ObsTAP).
-In the ObsCore standard, there are three uses of IVOID-valued attributes in the data model:
+The most important near-term use of IVOID in our data services is in the context of ObsCore-based image metadata services (SIAv2 {cite:p}`2015ivoa.spec.1223D` and ObsTAP).
+In the ObsCore standard {cite:p}`2017ivoa.spec.0509L`, there are three uses of IVOID-valued attributes in the data model:
 
 * `publisher_id`: "The IVOA ID for the data provider as defined in the Spectrum DM"
 * `obs_publisher_did`: "IVOA dataset identifier (Plante and al. 2007) for [a] published data product" (site-dependent)
 * `obs_creator_did`: "IVOA dataset identifier given by [a dataset's] creator"
 
 For `publisher_id` we will normally use simply `ivo://org.rubinobs` without an additional resource key.
-This represents publication by the Observatory through data services that it controls or that have chosen,
-by agreement with the Observatory, to represent themselves as affiliated publishers (e.g., IDACs).
+This represents publication by the Observatory through data services that it controls or that have chosen, by agreement with the Observatory, to represent themselves as affiliated publishers (e.g., IDACs).
 
 For the latter two attributes, which apply to individual datasets, the following two paragraphs
 from the ObsCore v1.1 standard are relevant and provide additional clarification.
 From section 4.5:
 
-"The `obs_publisher_did` column contains the IVOA dataset identifier (Plante and al. 2007)
-for the published data product.
- **This value must be unique within the namespace controlled by the dataset publisher**
-(data center).
-The value will also be globally unique since each publisher has a unique IVOA registered
-publisher ID.
-The same dataset may however have more than one publisher dataset identifier if it is
-published in more than one location; the creator DID, if defined for the given dataset,
-would be the same regardless of where the data is published.
-The returned `obs_publisher_did` for a static data product should remain identical
+> "The `obs_publisher_did` column contains the IVOA dataset identifier (Plante and al. 2007) for the published data product.
+> **This value must be unique within the namespace controlled by the dataset publisher** (data center).
+> The value will also be globally unique since each publisher has a unique IVOA registered publisher ID.
+> The same dataset may however have more than one publisher dataset identifier if it is published in more than one location; the creator DID, if defined for the given dataset, would be the same regardless of where the data is published.
+> The returned `obs_publisher_did` for a static data product should remain identical
 through time for future reference."
 
 and from section B.3:
 
-"We ... distinguish two datasets curated by two different services (archives) but originating from the same creator.
-When broadcasting a query to multiple servers, the response may contain multiple copies of the same dataset,
-with a unique `obs_creator_did` but possibly different `obs_publisher_did` (given by the data provider)."
+> "We ... distinguish two datasets curated by two different services (archives) but originating from the same creator.
+> When broadcasting a query to multiple servers, the response may contain multiple copies of the same dataset, with a unique `obs_creator_did` but possibly different `obs_publisher_did` (given by the data provider)."
 
 With this in mind we allow for including both the DAC and the data release in the resource key.
 
@@ -126,7 +118,7 @@ This may result in duplication of data release information from the resource key
 The query string can be either a string that should be parsed into components or use the more explicit query string format.
 Rather than using something like `?label/UUID` we have decided to use the more explicit form of `?repo=label&id=UUID`.
 
-The intent is that a full IVOID for a dataset (e.g., from an ObsCore `obs_publisher_did`) should be usable to drive a Butler lookup of that dataset.  
+The intent is that a full IVOID for a dataset (e.g., from an ObsCore `obs_publisher_did`) should be usable to drive a Butler lookup of that dataset.
 (This assumes backward compatibility, at least at the level of the ability to perform a `Butler.get()` operation, if not to run the pipelines.)
 Note that UUIDs are already expected to remain stable across export/import of data from its "Butler of origin" to others, e.g., at remote DACs.
 ### Catalog Entries

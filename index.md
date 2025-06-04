@@ -12,6 +12,7 @@ The registry part consists of a naming authority (effectively an internet locati
 The local part corresponds to the `query` component of a URI and can additional be fine-tuned by the use of a fragment.
 This document will address the naming authority, resource key, and query parts of the URI.
 
+IVOIDs are used in the ObsCore standard, in particular, for the following fields: `obs_publisher_did`, `obs_creator_did`, and `publisher_id`.  The roles of these fields, and how we will use them, are discussed below.
 While IVOIDs do provide a standard means of labeling datasets, with the intention of stability across the lifetime of
 the publisher, they are not equivalent to, and are not substitutes for, the use of DOIs for LSST entities and datasets.
 Those are discussed elsewhere, primarily in DMTN-318.
@@ -125,6 +126,9 @@ This may result in duplication of data release information from the resource key
 The query string can be either a string that should be parsed into components or use the more explicit query string format.
 Rather than using something like `?label/UUID` we have decided to use the more explicit form of `?repo=label&id=UUID`.
 
+The intent is that a full IVOID for a dataset (e.g., from an ObsCore `obs_publisher_did`) should be usable to drive a Butler lookup of that dataset.  
+(This assumes backward compatibility, at least at the level of the ability to perform a `Butler.get()` operation, if not to run the pipelines.)
+Note that UUIDs are already expected to remain stable across export/import of data from its "Butler of origin" to others, e.g., at remote DACs.
 ### Catalog Entries
 
 There is no requirement for us to issue IVOA identifiers for individual catalog entries, but there is nothing to prevent this if we so desire.

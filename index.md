@@ -121,6 +121,7 @@ Rather than using something like `?label/UUID` we have decided to use the more e
 The intent is that a full IVOID for a dataset (e.g., from an ObsCore `obs_publisher_did`) should be usable to drive a Butler lookup of that dataset.
 (This assumes backward compatibility, at least at the level of the ability to perform a `Butler.get()` operation, if not to run the pipelines.)
 Note that UUIDs are already expected to remain stable across export/import of data from its "Butler of origin" to others, e.g., at remote DACs.
+
 ### Catalog Entries
 
 There is no requirement for us to issue IVOA identifiers for individual catalog entries, but there is nothing to prevent this if we so desire.
@@ -129,6 +130,12 @@ Catalog IDs are meant to be unique for a given data release but are not necessar
 In a similar way to our handling of query strings for Butler datasets we propose a form of `?type=object&release=dr1&id=OBJECTID` for catalog entries.
 Here type can be `object`, `source`, `diaobject`, `diasource`, or `forcedsource`.
 
+### HiPS images
+
+HiPS property files are also required to declare an IVOID.
+A single dataset type can be represented by multiple HiPS renderings, and therefore the scheme we are adopting is:
+
+* `ivo://org.rubinobs/lsst-dp1?hips=<hips label>&type=<butler dataset type>`
 
 ## Combined Example
 
@@ -136,6 +143,7 @@ Given the decisions from the previous sections we propose that our IVOA identifi
 
 * `ivo://org.rubinobs/lsst-dr1?repo=dr1&id=UUID`
 * `ivo://org.rubinobs/lsst-dp1?type=object&release=dp1&id=OBJECTID`
+* `ivo://org.rubinobs/lsst-dp1?hips=color_gri&type=deep_coadd`
 
 These are in `obs_creator_did` form; `obs_publisher_did`-style IVOIDs will be constructed by
 insertion of the DAC name in the resource key, e.g.:

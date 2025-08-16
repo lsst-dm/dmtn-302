@@ -4,6 +4,8 @@
 The IVOA define a standard URI scheme to reference individual datasets. In this document we will define how these IVOA Identifiers will be formed for Butler datasets and possibly object catalog IDs.
 ```
 
+DOI: [10.71929/rubin/2583848](https://doi.org/10.71929/rubin/2583848)
+
 ## Introduction
 
 The IVOA Identifier (IVOID) standard {cite:p}`2016ivoa.spec.0523D` provides a mechanism for publishers to provide unique identifiers to individual datasets using an `ivo` URI scheme.
@@ -113,7 +115,7 @@ We believe it will be substantially useful for users to be able to re-use `obs_c
 ## Query
 
 The query part of the IVOID indicates how a specific dataset should be referenced.
-For a Butler dataset we would need the repository label and the dataset UUID.
+For a Butler dataset (see e.g., {cite:t}`2022SPIE12189E..11J`) we would need the repository label and the dataset UUID.
 This may result in duplication of data release information from the resource key but we do not see that as a problem.
 The query string can be either a string that should be parsed into components or use the more explicit query string format.
 Rather than using something like `?label/UUID` we have decided to use the more explicit form of `?repo=label&id=UUID`.
@@ -132,7 +134,7 @@ Here type can be `object`, `source`, `diaobject`, `diasource`, or `forcedsource`
 
 ### HiPS images
 
-HiPS property files are also required to declare an IVOID.
+HiPS property files {cite:p}`2017ivoa.spec.0519F` are also required to declare an IVOID.
 A single dataset type can be represented by multiple HiPS renderings, and therefore the scheme we are adopting is:
 
 * `ivo://org.rubinobs/lsst-dp1?hips=<hips label>&type=<butler dataset type>`

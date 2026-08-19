@@ -30,3 +30,10 @@ orcid = "https://orcid.org/0000-0003-1598-6979"
 name = "Caltech/IPAC"
 internal_id = "IPAC"
 address = "California Institute of Technology, MS 100-22, Pasadena, CA 91125-2200, USA"
+[[technote.authors]]
+name.given = "Stelios"
+name.family = "Voutsinas"
+internal_id = "voutsinass"
+orcid = "https://orcid.org/0009-0003-4290-2942"
+[[technote.authors.affiliations]]
+name = "Vera C. Rubin Observatory Project Office"

@@ -1,7 +1,8 @@
 # IVOA Identifier Usage at the Rubin Observatory
 
 ```{abstract}
-The IVOA define a standard URI scheme to reference individual datasets. In this document we will define how these IVOA Identifiers will be formed for Butler datasets and possibly object catalog IDs.
+The IVOA define a standard URI scheme to reference individual datasets and registry resources.
+In this document we will define how these IVOA Identifiers will be formed for Butler datasets and object catalog IDs, and describe the service and collection registry records published by Rubin Observatory and the IVOIDs assigned to them.
 ```
 
 DOI: [10.71929/rubin/2583848](https://doi.org/10.71929/rubin/2583848)
@@ -79,19 +80,19 @@ With this in mind we allow for including both the DAC and the data release in th
 
 Specifically, we plan to issue `obs_creator_did`-style IVOIDs of the form:
 
-* `ivo://org.rubinobs/lsst-dp1`
-* `ivo://org.rubinobs/lsst-pp`
-* `ivo://org.rubinobs/lsst-dr1`
+* `ivo://org.rubinobs/lsst-dp1/datasets`
+* `ivo://org.rubinobs/lsst-pp/datasets`
+* `ivo://org.rubinobs/lsst-dr1/datasets`
 
 as well as `obs_publisher_did`-style IVOIDs of the form:
 
-* `ivo://org.rubinobs/usdac/lsst-dp1`
-* `ivo://org.rubinobs/usdac/lsst-pp`
-* `ivo://org.rubinobs/usdac/lsst-dr1`
+* `ivo://org.rubinobs/usdac/lsst-dp1/datasets`
+* `ivo://org.rubinobs/usdac/lsst-pp/datasets`
+* `ivo://org.rubinobs/usdac/lsst-dr1/datasets`
 
 and for other DACs, e.g.,
 
-* `ivo://org.rubinobs/ukdac/lsst-dp1`
+* `ivo://org.rubinobs/ukdac/lsst-dp1/datasets`
 
 Differentiating the project's, and partner, DACs in the resource key allows the Registry to represent choices
 that DACs may make to serve different subsets of of the available data (resources) via different constellations of services.
@@ -112,6 +113,51 @@ We intend to ensure that LSST data will be queriable both by `obs_creator_did` a
 though this may not be fully in place in the DP1 era.
 We believe it will be substantially useful for users to be able to re-use `obs_creator_did` values across DACs.
 
+## Service and Collection Registry Records
+
+The IVOA Identifiers standard {cite:p}`2016ivoa.spec.0523D` requires that for any IVOID, the registry part (scheme, authority, and path before the `?`) must resolve to a record in an IVOA Registry.
+For a per-object IVOID like `ivo://org.rubinobs/lsst-dp1/datasets?type=object&release=dp1&id=OBJECTID`, the registry part `ivo://org.rubinobs/lsst-dp1/datasets` must therefore be a published registry record.
+
+Rubin Observatory will publish the following registry records.
+
+**Infrastructure records:**
+
+- `ivo://org.rubinobs`: IVOA naming authority record for Rubin
+- `ivo://org.rubinobs/registry`: the Rubin IVOA publishing registry
+- `ivo://org.rubinobs/org`: Rubin Observatory as an institution
+
+**Service records:**
+
+Service records describe physical service deployments and are named by deployment, since a single service may serve multiple datasets.
+
+- `ivo://org.rubinobs/qserv-tap`: TAP service providing catalog access across all data releases stored in QServ
+- `ivo://org.rubinobs/cutout`: SODA image cutout service
+
+SODA services do not require per-dataset collection records in the registry.
+SODA endpoints are generally discovered dynamically via DataLink responses from SIA and ObsCore queries, rather than through a registry lookup.
+
+**Per-release records:**
+
+For each data release, Rubin publishes a dataset identity record and one or more service-linked collection records, all sharing the same root release identifier:
+
+- `ivo://org.rubinobs/lsst-dp1/datasets`: a `vs:DataResource` record serving as the resolvable target for the registry part of all per-object IVOIDs for DP1 (i.e. Butler datasets & HiPS surveys).
+  This record is not designed to be referenced by any specific service and describes the data release as a collection entity.
+
+- `ivo://org.rubinobs/lsst-dp1/catalogs`: a `vs:CatalogResource` record linking the DP1 catalog data to the TAP service.
+  This record carries an auxiliary TAP capability pointing to the TAP service, an `IsServedBy` relationship to `ivo://org.rubinobs/qserv-tap`, and a `<tableset>` specific to DP1.
+  It is the discoverable record for clients searching the registry for catalog data from this release.
+
+- `ivo://org.rubinobs/lsst-dp1/sia`: a `vs:CatalogService` (SIAv2) record for image access for this release.
+  Since SIA services are deployed per dataset with distinct URLs, the service record itself describes both the service and the collection and thus no separate `vs:CatalogResource` is needed.
+
+The `/datasets` record will be the stable resolvable target for per-object IVOIDs (regardless of how the data is served), while catalog-specific metadata (i.e. tableset) and the TAP linkage is included in the separate `/catalogs` record that can be modified independently.
+
+For DAC-specific publisher records, the same pattern applies under the DAC sub-path, e.g.:
+
+- `ivo://org.rubinobs/ukdac/lsst-dp1/datasets`: `vs:DataResource` dataset collection record for DP1 at the UK DAC
+- `ivo://org.rubinobs/ukdac/lsst-dp1/catalogs`: `vs:CatalogResource` for DP1 catalog data at the UK DAC
+- `ivo://org.rubinobs/ukdac/lsst-dp1/sia`: SIAv2 service record for DP1 images at the UK DAC
+
 ## Query
 
 The query part of the IVOID indicates how a specific dataset should be referenced.
@@ -129,7 +175,7 @@ Note that UUIDs are already expected to remain stable across export/import of da
 There is no requirement for us to issue IVOA identifiers for individual catalog entries, but there is nothing to prevent this if we so desire.
 Catalog IDs are meant to be unique for a given data release but are not necessarily unique across the entire lifetime of the survey for all ID types.
 
-In a similar way to our handling of query strings for Butler datasets we propose a form of `?type=object&release=dr1&id=OBJECTID` for catalog entries.
+In a similar way to our handling of query strings for Butler datasets we propose a form of `ivo://org.rubinobs/lsst-dr1/catalogs?type=object&release=dr1&id=OBJECTID` for catalog entries.
 Here type can be `object`, `source`, `diaobject`, `diasource`, or `forcedsource`.
 
 ### HiPS images
@@ -137,20 +183,30 @@ Here type can be `object`, `source`, `diaobject`, `diasource`, or `forcedsource`
 HiPS property files {cite:p}`2017ivoa.spec.0519F` are also required to declare an IVOID.
 A single dataset type can be represented by multiple HiPS renderings, and therefore the scheme we are adopting is:
 
-* `ivo://org.rubinobs/lsst-dp1?hips=<hips label>&type=<butler dataset type>`
+* `ivo://org.rubinobs/lsst-dp1/datasets?hips=<hips label>&type=<butler dataset type>`
 
 ## Combined Example
 
-Given the decisions from the previous sections we propose that our IVOA identifiers will have the form:
+**Registry records**:
 
-* `ivo://org.rubinobs/lsst-dr1?repo=dr1&id=UUID`
-* `ivo://org.rubinobs/lsst-dp1?type=object&release=dp1&id=OBJECTID`
-* `ivo://org.rubinobs/lsst-dp1?hips=color_gri&type=deep_coadd`
+* `ivo://org.rubinobs/lsst-dp1/datasets`: `vs:DataResource` dataset collection record for DP1
+* `ivo://org.rubinobs/lsst-dp1/catalogs`: `vs:CatalogResource` for DP1 catalog data, linked to the TAP service
+* `ivo://org.rubinobs/lsst-dp1/sia`: `vs:CatalogService` (SIAv2) record for DP1 image access
+* `ivo://org.rubinobs/qserv-tap`: TAP service record
+* `ivo://org.rubinobs/cutout`: SODA image cutout service record
 
-These are in `obs_creator_did` form; `obs_publisher_did`-style IVOIDs will be constructed by
-insertion of the DAC name in the resource key, e.g.:
+**Per-object IVOIDs** (`obs_creator_did` form):
 
-* `ivo://org.rubinobs/usdac/lsst-dr1?repo=dr1&id=UUID`
+* `ivo://org.rubinobs/lsst-dr1/datasets?repo=dr1&id=UUID`
+* `ivo://org.rubinobs/lsst-dp1/catalogs?type=object&release=dp1&id=OBJECTID`
+* `ivo://org.rubinobs/lsst-dp1/datasets?hips=color_gri&type=deep_coadd`
+
+`obs_publisher_did`-style IVOIDs will be constructed by insertion of the DAC name in the resource key, e.g.:
+
+* `ivo://org.rubinobs/usdac/lsst-dr1/datasets?repo=dr1&id=UUID`
+
+The registry part of any per-object IVOID (i.e. the IVOID with the local part stripped) resolves to the appropriate collection record for that release.
+Butler dataset and HiPS IVOIDs resolve to the `vs:DataResource` record (e.g. `ivo://org.rubinobs/lsst-dp1/datasets`), while catalog entry IVOIDs resolve to the `vs:CatalogResource` record (`ivo://org.rubinobs/lsst-dp1/catalogs`).
 
 
 ## References
